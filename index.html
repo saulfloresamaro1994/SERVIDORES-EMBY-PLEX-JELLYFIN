@@ -726,7 +726,7 @@
 
         <!-- Sección de testimonios -->
         <div class="contenedor-testimonios" id="contenedorTestimonios">
-            <h2 style="text-align: center; margin-bottom: 25px;">Testimonios de Clientes</h2>
+            <h2 style="text-align: center; margin-bottom: 25px;">Testimonios Recientes</h2>
             
             <div class="testimonios-container" id="testimoniosLista">
                 <!-- Testimonios se cargarán aquí dinámicamente -->
@@ -734,11 +734,14 @@
             
             <!-- Formulario para enviar testimonios -->
             <div class="testimonio-form">
-                <h3 class="form-titulo">¡Deja tu testimonio!</h3>
+                <h3 class="form-titulo">¡Comparte tu experiencia!</h3>
+                <p style="text-align: center; color: var(--light-gray); margin-bottom: 20px;">
+                    Tu opinión nos ayuda a mejorar. Los testimonios se renuevan cada lunes.
+                </p>
                 <form id="formTestimonio">
                     <div class="form-group">
                         <label for="nombre" class="form-label">Nombre:</label>
-                        <input type="text" id="nombre" class="form-input" required>
+                        <input type="text" id="nombre" class="form-input" required placeholder="Tu nombre o alias">
                     </div>
                     
                     <div class="form-group">
@@ -754,11 +757,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="testimonio" class="form-label">Tu testimonio:</label>
-                        <textarea id="testimonio" class="form-input form-textarea" required></textarea>
+                        <label for="testimonio" class="form-label">Tu experiencia:</label>
+                        <textarea id="testimonio" class="form-input form-textarea" required placeholder="Cuéntanos qué te parece nuestro servicio..."></textarea>
                     </div>
                     
-                    <button type="submit" class="form-submit">Enviar Testimonio</button>
+                    <button type="submit" class="form-submit">
+                        <i class="fas fa-paper-plane"></i> Publicar Testimonio
+                    </button>
                 </form>
             </div>
         </div>
@@ -1158,8 +1163,131 @@
                     this.enviarTestimonio();
                 });
                 
-                // Cargar testimonios guardados
+                // Verificar reinicio semanal y cargar testimonios
+                this.verificarReinicioSemanal();
                 this.cargarTestimonios();
+            }
+            
+            verificarReinicioSemanal() {
+                const hoy = new Date();
+                const diaSemana = hoy.getDay(); // 0=Domingo, 1=Lunes, etc.
+                const ultimoReinicio = localStorage.getItem('ultimoReinicioTestimonios');
+                
+                // Si es lunes y no hemos reiniciado hoy, o si nunca se ha reiniciado
+                if ((diaSemana === 1 && ultimoReinicio !== this.getFechaFormateada(hoy)) || !ultimoReinicio) {
+                    this.reiniciarTestimonios();
+                    localStorage.setItem('ultimoReinicioTestimonios', this.getFechaFormateada(hoy));
+                }
+            }
+            
+            reiniciarTestimonios() {
+                // Limpiar testimonios existentes
+                localStorage.removeItem('testimonios');
+                this.testimoniosLista.innerHTML = '';
+                
+                // Agregar nuevos testimonios de ejemplo
+                this.agregarTestimoniosEjemplo();
+            }
+            
+            getFechaFormateada(fecha) {
+                const dia = fecha.getDate().toString().padStart(2, '0');
+                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+                const anio = fecha.getFullYear();
+                return `${dia}/${mes}/${anio}`;
+            }
+            
+            generarFechaAleatoria() {
+                const hoy = new Date();
+                const añoActual = hoy.getFullYear();
+                const mesActual = hoy.getMonth();
+                const diaActual = hoy.getDate();
+                
+                // Generar un mes aleatorio entre 0 (enero) y el mes actual
+                const mesAleatorio = Math.floor(Math.random() * (mesActual + 1));
+                
+                // Determinar el día máximo para el mes seleccionado
+                let diaMaximo;
+                if (mesAleatorio === mesActual) {
+                    // Para el mes actual, no superar el día actual
+                    diaMaximo = diaActual;
+                } else {
+                    // Para meses anteriores, usar el último día del mes
+                    diaMaximo = new Date(añoActual, mesAleatorio + 1, 0).getDate();
+                }
+                
+                // Generar un día aleatorio entre 1 y diaMaximo
+                const diaAleatorio = Math.floor(Math.random() * diaMaximo) + 1;
+                
+                // Crear y devolver la fecha aleatoria
+                const fechaAleatoria = new Date(añoActual, mesAleatorio, diaAleatorio);
+                return fechaAleatoria;
+            }
+            
+            agregarTestimoniosEjemplo() {
+                const hoy = new Date();
+                const añoActual = hoy.getFullYear();
+                
+                // Generamos 6 testimonios con fechas variadas pero todas del año actual y anteriores a hoy
+                const testimoniosEjemplo = [
+                    {
+                        nombre: "María González",
+                        avatar: "https://randomuser.me/api/portraits/women/32.jpg",
+                        fecha: this.getFechaFormateada(this.generarFechaAleatoria()),
+                        texto: "Excelente servicio, la calidad del streaming es increíble y el catálogo muy completo. Nunca he tenido problemas de buffering y el soporte siempre responde rápido.",
+                        rating: 5
+                    },
+                    {
+                        nombre: "Carlos Martínez",
+                        avatar: "https://randomuser.me/api/portraits/men/45.jpg",
+                        fecha: this.getFechaFormateada(this.generarFechaAleatoria()),
+                        texto: "Llevo varios meses usando el servicio y es de lo mejor que he probado. Las películas en 4K se ven espectaculares y siempre añaden contenido nuevo. Recomendado 100%.",
+                        rating: 4.5
+                    },
+                    {
+                        nombre: "Ana Rodríguez",
+                        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
+                        fecha: this.getFechaFormateada(this.generarFechaAleatoria()),
+                        texto: "Me encanta que tienen contenido para toda la familia. Mis hijos disfrutan las series infantiles y yo las películas clásicas. El precio es muy accesible para todo lo que ofrecen.",
+                        rating: 5
+                    },
+                    {
+                        nombre: "Luis Sánchez",
+                        avatar: "https://randomuser.me/api/portraits/men/22.jpg",
+                        fecha: this.getFechaFormateada(this.generarFechaAleatoria()),
+                        texto: "El mejor servicio de streaming que he contratado. La variedad de contenido es impresionante y la calidad de video excelente.",
+                        rating: 5
+                    },
+                    {
+                        nombre: "Patricia López",
+                        avatar: "https://randomuser.me/api/portraits/women/44.jpg",
+                        fecha: this.getFechaFormateada(this.generarFechaAleatoria()),
+                        texto: "Soporte técnico muy eficiente. Resolvieron mi problema en menos de 10 minutos. ¡Impresionante!",
+                        rating: 4
+                    },
+                    {
+                        nombre: "Jorge Ramírez",
+                        avatar: "https://randomuser.me/api/portraits/men/33.jpg",
+                        fecha: this.getFechaFormateada(this.generarFechaAleatoria()),
+                        texto: "Contenido actualizado constantemente y calidad de imagen excelente. Vale cada peso que pago por el servicio.",
+                        rating: 5
+                    }
+                ];
+                
+                // Ordenar testimonios por fecha (más reciente primero)
+                testimoniosEjemplo.sort((a, b) => {
+                    const fechaA = new Date(a.fecha.split('/').reverse().join('-'));
+                    const fechaB = new Date(b.fecha.split('/').reverse().join('-'));
+                    return fechaB - fechaA;
+                });
+                
+                // Guardar testimonios de ejemplo
+                localStorage.setItem('testimonios', JSON.stringify(testimoniosEjemplo));
+                
+                // Mostrar testimonios de ejemplo
+                this.testimoniosLista.innerHTML = ''; // Limpiar primero
+                testimoniosEjemplo.forEach(testimonio => {
+                    this.agregarTestimonioALista(testimonio);
+                });
             }
             
             toggleSection(section) {
@@ -1225,52 +1353,15 @@
                 if (testimoniosGuardados) {
                     const testimonios = JSON.parse(testimoniosGuardados);
                     
-                    // Agregar testimonios de ejemplo si no hay ninguno guardado
-                    if (testimonios.length === 0) {
-                        this.agregarTestimoniosEjemplo();
-                    } else {
-                        testimonios.forEach(testimonio => {
-                            this.agregarTestimonioALista(testimonio);
-                        });
-                    }
+                    // Mostrar testimonios guardados
+                    this.testimoniosLista.innerHTML = ''; // Limpiar primero
+                    testimonios.forEach(testimonio => {
+                        this.agregarTestimonioALista(testimonio);
+                    });
                 } else {
                     // Si no hay testimonios guardados, agregar algunos de ejemplo
                     this.agregarTestimoniosEjemplo();
                 }
-            }
-            
-            agregarTestimoniosEjemplo() {
-                const testimoniosEjemplo = [
-                    {
-                        nombre: "María González",
-                        avatar: "https://randomuser.me/api/portraits/women/32.jpg",
-                        fecha: "15/05/2023",
-                        texto: "Excelente servicio, la calidad del streaming es increíble y el catálogo muy completo. Nunca he tenido problemas de buffering y el soporte siempre responde rápido.",
-                        rating: 5
-                    },
-                    {
-                        nombre: "Carlos Martínez",
-                        avatar: "https://randomuser.me/api/portraits/men/45.jpg",
-                        fecha: "22/06/2023",
-                        texto: "Llevo 6 meses usando el servicio y es de lo mejor que he probado. Las películas en 4K se ven espectaculares y siempre añaden contenido nuevo. Recomendado 100%.",
-                        rating: 4.5
-                    },
-                    {
-                        nombre: "Ana Rodríguez",
-                        avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-                        fecha: "03/07/2023",
-                        texto: "Me encanta que tienen contenido para toda la familia. Mis hijos disfrutan las series infantiles y yo las películas clásicas. El precio es muy accesible para todo lo que ofrecen.",
-                        rating: 5
-                    }
-                ];
-                
-                // Guardar testimonios de ejemplo
-                localStorage.setItem('testimonios', JSON.stringify(testimoniosEjemplo));
-                
-                // Mostrar testimonios de ejemplo
-                testimoniosEjemplo.forEach(testimonio => {
-                    this.agregarTestimonioALista(testimonio);
-                });
             }
             
             enviarTestimonio() {
@@ -1286,10 +1377,7 @@
                 
                 // Obtener la fecha actual
                 const fecha = new Date();
-                const dia = fecha.getDate().toString().padStart(2, '0');
-                const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-                const anio = fecha.getFullYear();
-                const fechaFormateada = `${dia}/${mes}/${anio}`;
+                const fechaFormateada = this.getFechaFormateada(fecha);
                 
                 // Generar un avatar aleatorio
                 const genero = Math.random() > 0.5 ? 'men' : 'women';
@@ -1360,7 +1448,7 @@
                     testimonios = JSON.parse(testimoniosGuardados);
                 }
                 
-                // Agregar nuevo testimonio
+                // Agregar nuevo testimonio al principio del array
                 testimonios.unshift(nuevoTestimonio);
                 
                 // Guardar en localStorage
