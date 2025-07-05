@@ -1968,7 +1968,7 @@
                         <div class="oferta-beneficio">Peticiones de contenido</div>
                         <div class="oferta-beneficio">Soporte prioritario</div>
                     </div>
-                    <a href="#" class="oferta-btn">
+                    <a href="#" class="oferta-btn" id="ofertaTrimestralBtn">
                         <i class="fas fa-shopping-cart"></i> SUSCRIBIRME
                     </a>
                 </div>
@@ -1986,7 +1986,7 @@
                         <div class="oferta-beneficio">Soporte VIP 24/7</div>
                         <div class="oferta-beneficio">4 meses gratis</div>
                     </div>
-                    <a href="#" class="oferta-btn">
+                    <a href="#" class="oferta-btn" id="ofertaAnualBtn">
                         <i class="fas fa-shopping-cart"></i> SUSCRIBIRME
                     </a>
                 </div>
@@ -2004,7 +2004,7 @@
                         <div class="oferta-beneficio">Perfiles por separado</div>
                         <div class="oferta-beneficio">Peticiones de contenido</div>
                     </div>
-                    <a href="#" class="oferta-btn">
+                    <a href="#" class="oferta-btn" id="ofertaFamiliarBtn">
                         <i class="fas fa-shopping-cart"></i> SUSCRIBIRME
                     </a>
                 </div>
@@ -2293,6 +2293,11 @@
                 this.votarBtn = document.getElementById('votarBtn');
                 this.encuestaResultados = document.getElementById('encuestaResultados');
                 
+                // Botones de ofertas
+                this.ofertaTrimestralBtn = document.getElementById('ofertaTrimestralBtn');
+                this.ofertaAnualBtn = document.getElementById('ofertaAnualBtn');
+                this.ofertaFamiliarBtn = document.getElementById('ofertaFamiliarBtn');
+                
                 // WhatsApp
                 this.whatsappNumber = '5567416073';
                 this.activeSection = null;
@@ -2391,6 +2396,22 @@
                 
                 document.getElementById('unirseAfiliadosBtn').addEventListener('click', () => {
                     this.contactarWhatsApp('PROGRAMA DE AFILIADOS');
+                });
+                
+                // Eventos para botones de ofertas
+                this.ofertaTrimestralBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.contactarWhatsAppOferta('Plan Trimestral - 3 meses por $250 MXN (Ahorro del 15%)');
+                });
+                
+                this.ofertaAnualBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.contactarWhatsAppOferta('Plan Anual - 12 meses por $800 MXN (Ahorro del 30% + 4 meses gratis)');
+                });
+                
+                this.ofertaFamiliarBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.contactarWhatsAppOferta('Plan Familiar - 3 meses por $700 MXN (Hasta 4 dispositivos simultáneos)');
                 });
                 
                 // Cerrar modal al hacer clic fuera del contenido
@@ -2618,6 +2639,12 @@
                 } else if (servidor.includes('JELLYFIN')) {
                     this.modalJellyfin.style.display = 'none';
                 }
+            }
+            
+            contactarWhatsAppOferta(oferta) {
+                const mensaje = `¡Hola! Estoy interesado en la oferta: ${oferta}. ¿Podrían proporcionarme más información?`;
+                const urlWhatsApp = `https://wa.me/${this.whatsappNumber}?text=${encodeURIComponent(mensaje)}`;
+                window.open(urlWhatsApp, '_blank');
             }
             
             setRating(rating) {
